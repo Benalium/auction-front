@@ -1,0 +1,108 @@
+.main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.hero {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+  margin-bottom: var(--space-8);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-muted) 0%,
+    var(--color-background) 100%
+  );
+  border-radius: var(--radius-lg);
+}
+
+.heroTitle {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-4);
+  color: var(--color-text);
+}
+
+.heroSub {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-6);
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heroActions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.primaryCta {
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+.primaryCta:hover {
+  background: var(--color-primary-hover);
+  color: white;
+  text-decoration: none;
+}
+
+.secondaryCta {
+  padding: var(--space-3) var(--space-6);
+  background: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.secondaryCta:hover {
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.section {
+  margin-top: var(--space-8);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-6);
+  color: var(--color-text);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-6);
+}
+
+.loading,
+.empty {
+  color: var(--color-text-secondary);
+  padding: var(--space-8);
+  text-align: center;
+}
+
+.more {
+  text-align: center;
+  margin-top: var(--space-6);
+}
+
+.moreLink {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.moreLink:hover {
+  text-decoration: underline;
+}
