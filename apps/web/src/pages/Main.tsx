@@ -3,12 +3,10 @@ import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import type { Lot } from "auction-api-client";
 import { LotCard } from "../components/LotCard";
-import { useAuthModal } from "../context/AuthModalContext";
 
 import styles from "./Main.module.css";
 
 export function Main() {
-  const { openRegister } = useAuthModal();
   const [lots, setLots] = useState<Lot[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,13 +33,9 @@ export function Main() {
           <Link to="/catalog" className={styles.primaryCta}>
             Смотреть аукционы
           </Link>
-          <button
-            type="button"
-            className={styles.secondaryCta}
-            onClick={openRegister}
-          >
+          <Link to="/register" className={styles.secondaryCta}>
             Зарегистрироваться
-          </button>
+          </Link>
         </div>
       </section>
 

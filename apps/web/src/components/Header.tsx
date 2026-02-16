@@ -3,16 +3,12 @@ import { Search, Bell, User, Menu, Sun, Moon } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { useTheme } from "../theme/ThemeContext";
-import { useAuthModal } from "../context/AuthModalContext";
-import { LoginModal } from "../pages/LoginModal";
-import { RegisterModal } from "../pages/RegisterModal";
 
 import styles from "./Header.module.css";
 
 export function Header() {
   const { isAuthenticated, user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { isLoginOpen, isRegisterOpen, openLogin, openRegister, closeLogin, closeRegister } = useAuthModal();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,7 +26,7 @@ export function Header() {
       navigate("/profile");
       setMobileMenuOpen(false);
     } else {
-      openLogin();
+      navigate("/login");
       setMobileMenuOpen(false);
     }
   };
@@ -168,32 +164,18 @@ export function Header() {
                   </button>
                 </>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    openLogin();
-                    setMobileMenuOpen(false);
-                  }}
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
                   className={styles.mobileLink}
                 >
                   Войти
-                </button>
+                </Link>
               )}
             </div>
           </div>
         )}
       </header>
-
-      <LoginModal
-        isOpen={isLoginOpen}
-        onClose={closeLogin}
-        onOpenRegister={openRegister}
-      />
-      <RegisterModal
-        isOpen={isRegisterOpen}
-        onClose={closeRegister}
-        onOpenLogin={openLogin}
-      />
     </>
   );
 }

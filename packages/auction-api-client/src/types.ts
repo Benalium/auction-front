@@ -1,6 +1,6 @@
 // Auth
 export interface RegisterPayload {
-  username: string;
+  name: string;
   email: string;
   password: string;
   phone_number?: string;
@@ -11,6 +11,7 @@ export interface RegisterPayload {
 export interface RegisterResponse {
   id: number;
   username: string;
+  name?: string;
   email: string;
   message?: string;
 }

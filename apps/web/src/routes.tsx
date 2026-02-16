@@ -9,6 +9,8 @@ import { Profile } from "./pages/Profile";
 import { Favorites } from "./pages/Favorites";
 import { About } from "./pages/About";
 import { Contacts } from "./pages/Contacts";
+import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
 
 export function AppRoutes() {
   return (
@@ -36,6 +38,8 @@ export function AppRoutes() {
         <Route path="favorites" element={<Favorites />} />
         <Route path="about" element={<About />} />
         <Route path="contacts" element={<Contacts />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
       </Route>
     </Routes>
   );

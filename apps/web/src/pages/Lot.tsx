@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Heart, Share2 } from "lucide-react";
 import { api } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
-import { useAuthModal } from "../context/AuthModalContext";
+import { formatApiError } from "../utils/formatApiError";
 import { useFavorites } from "../hooks/useFavorites";
 import { Countdown } from "../components/Countdown";
 
@@ -22,7 +22,7 @@ function formatPrice(value: number): string {
 export function Lot() {
   const { id } = useParams<{ id: string }>();
   const { isAuthenticated } = useAuth();
-  const { openLogin } = useAuthModal();
+  const navigate = useNavigate();
   const { isFavorite, toggle } = useFavorites();
   const [lot, setLot] = useState<Awaited<ReturnType<typeof api.lots.get>> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ export function Lot() {
     if (!lot || !id) return;
     setBidError(null);
     if (!isAuthenticated) {
-      openLogin();
+      navigate("/login");
       return;
     }
     const value = parseFloat(bidValue.replace(/\s/g, ""));
@@ -63,7 +63,7 @@ export function Lot() {
     } catch (err: unknown) {
       const msg =
         err && typeof err === "object" && "body" in err
-          ? String((err as { body: unknown }).body)
+          ? formatApiError((err as { body: unknown }).body)
           : "Не удалось сделать ставку";
       setBidError(msg);
     }
