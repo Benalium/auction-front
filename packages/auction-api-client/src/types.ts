@@ -1,4 +1,6 @@
 // Auth
+
+/** Request body for POST /api/auth/register/ */
 export interface RegisterPayload {
   name: string;
   email: string;
@@ -8,6 +10,7 @@ export interface RegisterPayload {
   role_id?: number;
 }
 
+/** Response from POST /api/auth/register/ */
 export interface RegisterResponse {
   id: number;
   username: string;
@@ -16,12 +19,15 @@ export interface RegisterResponse {
   message?: string;
 }
 
+/** Response from POST /api/token/ (login) and POST /api/token/refresh/ */
 export interface TokenResponse {
   access: string;
   refresh: string;
 }
 
 // Lots
+
+/** Response from GET /api/lots/ (list item) and GET /api/lots/:id/; also response from POST /api/lots/ */
 export interface Lot {
   id: number;
   name: string;
@@ -34,6 +40,7 @@ export interface Lot {
   seller_id?: number | null;
 }
 
+/** Request body for POST /api/lots/ */
 export interface CreateLotPayload {
   name: string;
   starting_price: number;
@@ -42,11 +49,14 @@ export interface CreateLotPayload {
 }
 
 // Bets
+
+/** Request body for POST /api/bets/ */
 export interface CreateBetPayload {
   lot_id: number;
   value: number;
 }
 
+/** Response from POST /api/bets/ */
 export interface BetResponse {
   id: number;
   value: number;
