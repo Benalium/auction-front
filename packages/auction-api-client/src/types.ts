@@ -13,7 +13,6 @@ export interface RegisterPayload {
 /** Response from POST /api/auth/register/ */
 export interface RegisterResponse {
   id: number;
-  username: string;
   name?: string;
   email: string;
   message?: string;
@@ -27,6 +26,14 @@ export interface TokenResponse {
 
 // Lots
 
+/** Bet as nested in a lot (no lot_id) */
+export interface BetForLot {
+  id: number;
+  value: number;
+  user_id: number;
+  created_at: string;
+}
+
 /** Response from GET /api/lots/ (list item) and GET /api/lots/:id/; also response from POST /api/lots/ */
 export interface Lot {
   id: number;
@@ -38,6 +45,7 @@ export interface Lot {
   images_urls: string[];
   winner_id?: number | null;
   seller_id?: number | null;
+  bets?: BetForLot[];
 }
 
 /** Request body for POST /api/lots/ */

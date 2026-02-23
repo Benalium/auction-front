@@ -21,7 +21,7 @@ function formatPrice(value: number): string {
 
 export function Lot() {
   const { id } = useParams<{ id: string }>();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const { isFavorite, toggle } = useFavorites();
   const [lot, setLot] = useState<Awaited<ReturnType<typeof api.lots.get>> | null>(null);
@@ -54,11 +54,22 @@ export function Lot() {
       return;
     }
     try {
-      await api.bets.create({ lot_id: lot.id, value });
+      const bet = await api.bets.create({ lot_id: lot.id, value });
       setBidSuccess(true);
-      setLot((prev) =>
-        prev ? { ...prev, current_price: value } : prev
-      );
+      setLot((prev) => {
+        if (!prev) return prev;
+        const betForLot = {
+          id: bet.id,
+          value: bet.value,
+          user_id: bet.user_id,
+          created_at: bet.created_at,
+        };
+        return {
+          ...prev,
+          current_price: value,
+          bets: [betForLot, ...(prev.bets ?? [])],
+        };
+      });
       setBidValue("");
     } catch (err: unknown) {
       const msg =
@@ -75,6 +86,7 @@ export function Lot() {
   const images = lot.images_urls ?? [];
   const mainImage = images[0] ?? "";
   const currentPrice = lot.current_price ?? lot.starting_price;
+  const bets = lot.bets ?? [];
   const fav = isFavorite(lot.id);
 
   return (
@@ -154,8 +166,6 @@ export function Lot() {
             <span className={styles.price}>{formatPrice(currentPrice)}</span>
           </div>
 
-          <p className={styles.estimate}>Эстимейт: —</p>
-
           <form onSubmit={handleBid} className={styles.bidForm}>
             <label htmlFor="bid-value">Ваша ставка</label>
             <input
@@ -182,6 +192,38 @@ export function Lot() {
           <div className={styles.infoBox}>
             Для участия в аукционе необходима регистрация и внесение депозита.
           </div>
+
+          <section className={styles.betsSection}>
+            <h2 className={styles.betsTitle}>Ставки по лоту</h2>
+            {bets.length === 0 && (
+              <p className={styles.betsStatus}>Ставок пока нет</p>
+            )}
+            {bets.length > 0 && (
+              <div className={styles.betsTable}>
+                <div className={styles.betsHeader}>
+                  <span>Пользователь</span>
+                  <span>Ставка</span>
+                  <span>Время</span>
+                </div>
+                <div className={styles.betsBody}>
+                  {bets.map((bet) => (
+                    <div key={bet.id} className={styles.betsRow}>
+                      <span className={styles.betsUser}>
+                        ID {bet.user_id}
+                        {user && user.id === bet.user_id && " (вы)"}
+                      </span>
+                      <span className={styles.betsValue}>
+                        {formatPrice(bet.value)}
+                      </span>
+                      <span className={styles.betsTime}>
+                        {new Date(bet.created_at).toLocaleString("ru-RU")}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
         </div>
       </div>
     </main>

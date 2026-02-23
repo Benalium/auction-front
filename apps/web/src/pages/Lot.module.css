@@ -147,12 +147,6 @@
   color: var(--color-primary);
 }
 
-.estimate {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  margin: 0 0 var(--space-4);
-}
-
 .bidForm {
   display: flex;
   flex-direction: column;
@@ -215,6 +209,71 @@
   background: var(--color-background);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.betsSection {
+  margin-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+}
+
+.betsTitle {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-3);
+}
+
+.betsStatus {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.betsTable {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  font-size: var(--font-size-sm);
+}
+
+.betsHeader,
+.betsRow {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1.2fr;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+}
+
+.betsHeader {
+  background: var(--color-background);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.betsBody {
+  max-height: 260px;
+  overflow-y: auto;
+  background: var(--color-background-card);
+}
+
+.betsRow:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.betsUser {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.betsValue {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+}
+
+.betsTime {
+  text-align: right;
   color: var(--color-text-secondary);
 }
 
