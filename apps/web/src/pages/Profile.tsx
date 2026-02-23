@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import type { Lot } from "auction-api-client";
 import { useAuth } from "../auth/AuthContext";
@@ -20,7 +20,8 @@ function formatPrice(value: number): string {
 type TabId = "purchases" | "bids" | "settings";
 
 export function Profile() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const { favorites } = useFavorites();
   const [lots, setLots] = useState<Lot[]>([]);
   const [loading, setLoading] = useState(true);
@@ -113,8 +114,17 @@ export function Profile() {
         )}
 
         {activeTab === "settings" && (
-          <section>
-            <p className={styles.stub}>Настройки профиля — в разработке</p>
+          <section className={styles.settings}>
+            <button
+              type="button"
+              className={styles.quitButton}
+              onClick={() => {
+                logout();
+                navigate("/", { replace: true });
+              }}
+            >
+              Выйти из аккаунта
+            </button>
           </section>
         )}
       </div>
