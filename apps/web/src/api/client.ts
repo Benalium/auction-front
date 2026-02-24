@@ -4,17 +4,29 @@ import {
   type RegisterPayload,
   type RegisterResponse,
   type TokenResponse,
+  type MeResponse,
+  type TopUpBalancePayload,
   type Lot,
   type CreateLotPayload,
+  type UpdateLotPayload,
   type BetResponse,
   type CreateBetPayload,
   register as authRegister,
   login as authLogin,
   refreshToken as authRefreshToken,
+  getMe as authGetMe,
+  topUpBalance as authTopUpBalance,
   listLots,
   getLot,
   createLot,
+  updateLot,
+  finishLot,
+  deleteLot,
+  listBets,
   createBet,
+  listFavorites,
+  addFavorite,
+  removeFavorite,
 } from "auction-api-client";
 
 const TOKEN_KEY = "auction_tokens";
@@ -63,16 +75,30 @@ export const api = {
       authLogin(apiConfig, username, password) as Promise<TokenResponse>,
     refreshToken: (refresh: string) =>
       authRefreshToken(apiConfig, refresh) as Promise<TokenResponse>,
+    getMe: () => authGetMe(apiConfig) as Promise<MeResponse>,
+    topUpBalance: (payload: TopUpBalancePayload) =>
+      authTopUpBalance(apiConfig, payload) as Promise<MeResponse>,
   },
   lots: {
-    list: () => listLots(apiConfig) as Promise<Lot[]>,
+    list: (params?: { search?: string }) =>
+      listLots(apiConfig, params) as Promise<Lot[]>,
     get: (id: number) => getLot(apiConfig, id) as Promise<Lot>,
     create: (payload: CreateLotPayload) =>
       createLot(apiConfig, payload) as Promise<Lot>,
+    update: (id: number, payload: UpdateLotPayload) =>
+      updateLot(apiConfig, id, payload) as Promise<Lot>,
+    finish: (id: number) => finishLot(apiConfig, id) as Promise<Lot>,
+    delete: (id: number) => deleteLot(apiConfig, id),
   },
   bets: {
+    list: () => listBets(apiConfig) as Promise<BetResponse[]>,
     create: (payload: CreateBetPayload) =>
       createBet(apiConfig, payload) as Promise<BetResponse>,
+  },
+  favorites: {
+    list: () => listFavorites(apiConfig) as Promise<number[]>,
+    add: (lotId: number) => addFavorite(apiConfig, lotId),
+    remove: (lotId: number) => removeFavorite(apiConfig, lotId),
   },
 };
 

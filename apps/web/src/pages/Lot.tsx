@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Heart, Share2 } from "lucide-react";
+import { Heart, Share2, Pencil, Flag, Trash2 } from "lucide-react";
 import { api } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { formatApiError } from "../utils/formatApiError";
@@ -8,6 +8,8 @@ import { useFavorites } from "../hooks/useFavorites";
 import { Countdown } from "../components/Countdown";
 
 import styles from "./Lot.module.css";
+
+type LotBet = { id: number; value: number; user_id: number; created_at: string };
 
 function formatPrice(value: number): string {
   return (
@@ -54,23 +56,11 @@ export function Lot() {
       return;
     }
     try {
-      const bet = await api.bets.create({ lot_id: lot.id, value });
+      await api.bets.create({ lot_id: lot.id, value });
       setBidSuccess(true);
-      setLot((prev) => {
-        if (!prev) return prev;
-        const betForLot = {
-          id: bet.id,
-          value: bet.value,
-          user_id: bet.user_id,
-          created_at: bet.created_at,
-        };
-        return {
-          ...prev,
-          current_price: value,
-          bets: [betForLot, ...(prev.bets ?? [])],
-        };
-      });
       setBidValue("");
+      const updated = await api.lots.get(Number(id));
+      setLot(updated);
     } catch (err: unknown) {
       const msg =
         err && typeof err === "object" && "body" in err
@@ -86,14 +76,69 @@ export function Lot() {
   const images = lot.images_urls ?? [];
   const mainImage = images[0] ?? "";
   const currentPrice = lot.current_price ?? lot.starting_price;
-  const bets = lot.bets ?? [];
+  const bets: LotBet[] = (lot as { bets?: LotBet[] }).bets ?? [];
   const fav = isFavorite(lot.id);
+  const isWorker = user?.role?.code === "worker";
+  const canFinish = isWorker && lot.winner_id == null;
+
+  const handleFinishAuction = async () => {
+    if (!id || !canFinish) return;
+    try {
+      const updated = await api.lots.finish(Number(id));
+      setLot(updated);
+    } catch {
+      // error state could be shown
+    }
+  };
+
+  const handleDeleteLot = async () => {
+    if (!id || !isWorker) return;
+    if (!window.confirm("Удалить этот лот? Действие необратимо.")) return;
+    try {
+      await api.lots.delete(Number(id));
+      navigate("/catalog");
+    } catch {
+      // error state could be shown
+    }
+  };
 
   return (
     <main className={styles.main}>
-      <Link to="/catalog" className={styles.back}>
-        ← Вернуться в каталог
-      </Link>
+      <div className={styles.backRow}>
+        <Link to="/catalog" className={styles.back}>
+          ← Вернуться в каталог
+        </Link>
+        {isWorker && (
+          <div className={styles.workerActions}>
+            <Link
+              to={`/catalog/${lot.id}/edit`}
+              className={styles.workerBtn}
+            >
+              <Pencil size={18} />
+              Изменить лот
+            </Link>
+            {canFinish && (
+              <button
+                type="button"
+                className={styles.workerBtnDanger}
+                onClick={handleFinishAuction}
+              >
+                <Flag size={18} />
+                Завершить аукцион
+              </button>
+            )}
+            <button
+              type="button"
+              className={styles.workerBtnDanger}
+              onClick={handleDeleteLot}
+              aria-label="Удалить лот"
+            >
+              <Trash2 size={18} />
+              Удалить лот
+            </button>
+          </div>
+        )}
+      </div>
 
       <div className={styles.layout}>
         <div className={styles.gallery}>
@@ -137,7 +182,13 @@ export function Lot() {
             <button
               type="button"
               className={styles.iconBtn}
-              onClick={() => toggle(lot.id)}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  navigate("/login");
+                  return;
+                }
+                toggle(lot.id);
+              }}
               aria-label={fav ? "Убрать из избранного" : "В избранное"}
             >
               <Heart
@@ -161,33 +212,44 @@ export function Lot() {
             />
           </div>
 
+          <div className={styles.startingPriceBlock}>
+            <span className={styles.priceLabel}>Стартовая цена</span>
+            <span className={styles.startingPrice}>{formatPrice(lot.starting_price)}</span>
+          </div>
           <div className={styles.priceBlock}>
             <span className={styles.priceLabel}>Текущая ставка</span>
             <span className={styles.price}>{formatPrice(currentPrice)}</span>
           </div>
 
-          <form onSubmit={handleBid} className={styles.bidForm}>
-            <label htmlFor="bid-value">Ваша ставка</label>
-            <input
-              id="bid-value"
-              type="text"
-              placeholder={formatPrice(currentPrice)}
-              value={bidValue}
-              onChange={(e) => setBidValue(e.target.value)}
-              className={styles.bidInput}
-            />
-            <button
-              type="submit"
-              className={styles.bidBtn}
-              disabled={lot.winner_id != null}
-            >
-              Сделать ставку
-            </button>
-            {bidError && <p className={styles.bidError}>{bidError}</p>}
-            {bidSuccess && (
-              <p className={styles.bidSuccess}>Ставка принята!</p>
-            )}
-          </form>
+          {!isWorker && (
+            <form onSubmit={handleBid} className={styles.bidForm}>
+              <label htmlFor="bid-value">Ваша ставка</label>
+              <input
+                id="bid-value"
+                type="text"
+                placeholder={formatPrice(currentPrice)}
+                value={bidValue}
+                onChange={(e) => setBidValue(e.target.value)}
+                className={styles.bidInput}
+              />
+              <button
+                type="submit"
+                className={styles.bidBtn}
+                disabled={lot.winner_id != null}
+              >
+                Сделать ставку
+              </button>
+              {bidError && <p className={styles.bidError}>{bidError}</p>}
+              {bidSuccess && (
+                <p className={styles.bidSuccess}>Ставка принята!</p>
+              )}
+            </form>
+          )}
+          {isWorker && (
+            <p className={styles.workerBidNote}>
+              Работники не могут делать ставки по лотам.
+            </p>
+          )}
 
           <div className={styles.infoBox}>
             Для участия в аукционе необходима регистрация и внесение депозита.

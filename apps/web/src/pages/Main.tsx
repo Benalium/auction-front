@@ -31,7 +31,7 @@ export function Main() {
         </p>
         <div className={styles.heroActions}>
           <Link to="/catalog" className={styles.primaryCta}>
-            Смотреть аукционы
+            Смотреть лоты
           </Link>
           <Link to="/register" className={styles.secondaryCta}>
             Зарегистрироваться
@@ -40,7 +40,6 @@ export function Main() {
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Избранные лоты</h2>
         {loading ? (
           <p className={styles.loading}>Загрузка...</p>
         ) : featured.length === 0 ? (

@@ -46,15 +46,64 @@
   margin: 0 0 var(--space-1);
 }
 
-.favoritesLink {
-  display: inline-block;
-  margin-top: var(--space-4);
-  color: var(--color-primary);
-  font-weight: var(--font-weight-medium);
+.balanceLabel {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin: var(--space-3) 0 var(--space-1);
 }
 
-.favoritesLink:hover {
-  text-decoration: underline;
+.balanceValue {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.topUpForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.topUpInput {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  width: 120px;
+}
+
+.topUpInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.topUpBtn {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.topUpBtn:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.topUpBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.topUpError {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  margin: 0;
+  width: 100%;
 }
 
 .tabs {
@@ -131,6 +180,7 @@
 }
 
 .card {
+  position: relative;
   background: var(--color-background-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -148,9 +198,35 @@
   text-decoration: none;
 }
 
+.cardImageWrap {
+  position: relative;
+}
+
 .cardImage {
   aspect-ratio: 4/3;
   overflow: hidden;
+}
+
+.cardHeart {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.cardHeart:hover {
+  background: white;
+  color: var(--color-primary);
 }
 
 .cardImage img {
@@ -188,17 +264,60 @@
   margin: 0 0 var(--space-2);
 }
 
-.status {
-  display: inline-block;
-  font-size: var(--font-size-xs);
-  background: var(--color-success);
-  color: white;
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
-  margin-bottom: var(--space-2);
-}
-
 .cardBody .link {
+  display: inline-block;
   font-size: var(--font-size-sm);
   color: var(--color-primary);
+  margin-top: var(--space-2);
+}
+
+.bidsTable {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  font-size: var(--font-size-sm);
+}
+
+.bidsHeader,
+.bidsRow {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr 1.2fr;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  align-items: center;
+}
+
+.bidsHeader {
+  background: var(--color-background);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.bidsRow {
+  background: var(--color-background-card);
+  border-top: 1px solid var(--color-border);
+}
+
+.bidsRow:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.bidsLotLink {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+}
+
+.bidsLotLink:hover {
+  text-decoration: underline;
+  color: var(--color-primary);
+}
+
+.bidsValue {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+}
+
+.bidsDate {
+  color: var(--color-text-secondary);
 }

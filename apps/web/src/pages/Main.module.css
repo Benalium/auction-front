@@ -73,13 +73,6 @@
   margin-top: var(--space-8);
 }
 
-.sectionTitle {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  margin: 0 0 var(--space-6);
-  color: var(--color-text);
-}
-
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

@@ -1,6 +1,12 @@
 import type { ClientConfig } from "./client";
 import { request } from "./client";
-import type { RegisterPayload, RegisterResponse, TokenResponse } from "./types";
+import type {
+  MeResponse,
+  RegisterPayload,
+  RegisterResponse,
+  TokenResponse,
+  TopUpBalancePayload,
+} from "./types";
 
 export function register(config: ClientConfig, payload: RegisterPayload): Promise<RegisterResponse> {
   return request(config, "/api/auth/register/", {
@@ -27,5 +33,19 @@ export function refreshToken(
   return request(config, "/api/token/refresh/", {
     method: "POST",
     body: JSON.stringify({ refresh }),
+  });
+}
+
+export function getMe(config: ClientConfig): Promise<MeResponse> {
+  return request(config, "/api/auth/me/");
+}
+
+export function topUpBalance(
+  config: ClientConfig,
+  payload: TopUpBalancePayload
+): Promise<MeResponse> {
+  return request(config, "/api/auth/balance/top-up/", {
+    method: "POST",
+    body: JSON.stringify(payload),
   });
 }

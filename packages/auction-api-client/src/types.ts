@@ -24,6 +24,28 @@ export interface TokenResponse {
   refresh: string;
 }
 
+/** Role in GET /api/auth/me/ */
+export interface MeRole {
+  id: number;
+  name: string;
+  code: string;
+}
+
+/** Response from GET /api/auth/me/ and after POST /api/auth/balance/top-up/ */
+export interface MeResponse {
+  id: number;
+  username: string;
+  name: string;
+  email: string;
+  balance: number;
+  role?: MeRole | null;
+}
+
+/** Request body for POST /api/auth/balance/top-up/ */
+export interface TopUpBalancePayload {
+  amount: number;
+}
+
 // Lots
 
 /** Bet as nested in a lot (no lot_id) */
@@ -48,12 +70,20 @@ export interface Lot {
   bets?: BetForLot[];
 }
 
-/** Request body for POST /api/lots/ */
+/** Request body for POST /api/lots/ and PATCH /api/lots/:id/ */
 export interface CreateLotPayload {
   name: string;
   starting_price: number;
   end_time: string;
   images_urls: string[];
+}
+
+/** Partial body for PATCH /api/lots/:id/ */
+export interface UpdateLotPayload {
+  name?: string;
+  starting_price?: number;
+  end_time?: string;
+  images_urls?: string[];
 }
 
 // Bets

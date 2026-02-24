@@ -78,10 +78,7 @@ export function Login() {
               Забыли пароль?
             </button>
           </div>
-          <div className={styles.actions}>
-            <Link to="/" className={styles.secondaryBtn}>
-              Назад
-            </Link>
+          <div className={`${styles.actions} ${styles.actionsCentered}`}>
             <button
               type="submit"
               className={styles.primaryBtn}

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Bell, User, Menu, Sun, Moon } from "lucide-react";
+import { Bell, User, Menu, Sun, Moon } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { useTheme } from "../theme/ThemeContext";
@@ -10,16 +10,7 @@ export function Header() {
   const { isAuthenticated, user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/catalog?q=${encodeURIComponent(searchQuery.trim())}`);
-      setMobileMenuOpen(false);
-    }
-  };
 
   const handleProfileClick = () => {
     if (isAuthenticated) {
@@ -41,27 +32,9 @@ export function Header() {
 
           <nav className={styles.nav}>
             <Link to="/catalog">Каталог</Link>
-            <Link to="/favorites">Избранное</Link>
             <Link to="/about">О нас</Link>
             <Link to="/contacts">Контакты</Link>
-            {isAuthenticated && (
-              <Link to="/catalog/add">Добавить лот</Link>
-            )}
           </nav>
-
-          <form className={styles.search} onSubmit={handleSearch}>
-            <input
-              type="search"
-              placeholder="Поиск..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={styles.searchInput}
-              aria-label="Поиск"
-            />
-            <button type="submit" className={styles.searchBtn} aria-label="Искать">
-              <Search size={18} />
-            </button>
-          </form>
 
           <div className={styles.actions}>
             <button
@@ -86,6 +59,11 @@ export function Header() {
                 <Sun size={20} />
               )}
             </button>
+            {isAuthenticated && user && (
+              <span className={styles.balance}>
+                {new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 0 }).format(user.balance ?? 0)} ₽
+              </span>
+            )}
             <button
               type="button"
               className={styles.profileBtn}
@@ -115,36 +93,21 @@ export function Header() {
               <Link to="/catalog" onClick={() => setMobileMenuOpen(false)}>
                 Каталог
               </Link>
-              <Link to="/favorites" onClick={() => setMobileMenuOpen(false)}>
-                Избранное
-              </Link>
               <Link to="/about" onClick={() => setMobileMenuOpen(false)}>
                 О нас
               </Link>
               <Link to="/contacts" onClick={() => setMobileMenuOpen(false)}>
                 Контакты
               </Link>
-              {isAuthenticated && (
-                <Link to="/catalog/add" onClick={() => setMobileMenuOpen(false)}>
-                  Добавить лот
-                </Link>
-              )}
             </nav>
-            <form className={styles.mobileSearch} onSubmit={handleSearch}>
-              <input
-                type="search"
-                placeholder="Поиск..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={styles.searchInput}
-              />
-              <button type="submit" className={styles.searchBtn}>
-                <Search size={18} />
-              </button>
-            </form>
             <div className={styles.mobileActions}>
               {isAuthenticated ? (
                 <>
+                  {user && (
+                    <p className={styles.mobileBalance}>
+                      Баланс: {new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 0 }).format(user.balance ?? 0)} ₽
+                    </p>
+                  )}
                   <Link
                     to="/profile"
                     onClick={() => setMobileMenuOpen(false)}

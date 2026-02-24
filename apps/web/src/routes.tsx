@@ -5,6 +5,7 @@ import { Main } from "./pages/Main";
 import { Catalog } from "./pages/Catalog";
 import { Lot } from "./pages/Lot";
 import { AddLot } from "./pages/AddLot";
+import { EditLot } from "./pages/EditLot";
 import { Profile } from "./pages/Profile";
 import { Favorites } from "./pages/Favorites";
 import { About } from "./pages/About";
@@ -18,12 +19,20 @@ export function AppRoutes() {
       <Route path="/" element={<Layout />}>
         <Route index element={<Main />} />
         <Route path="catalog" element={<Catalog />} />
-        <Route path="catalog/:id" element={<Lot />} />
         <Route
           path="catalog/add"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireWorker>
               <AddLot />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="catalog/:id" element={<Lot />} />
+        <Route
+          path="catalog/:id/edit"
+          element={
+            <ProtectedRoute requireWorker>
+              <EditLot />
             </ProtectedRoute>
           }
         />

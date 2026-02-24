@@ -151,10 +151,7 @@ export function Register() {
               <span className={styles.fieldError}>{errors.terms.message}</span>
             )}
           </div>
-          <div className={styles.actions}>
-            <Link to="/" className={styles.secondaryBtn}>
-              Назад
-            </Link>
+          <div className={`${styles.actions} ${styles.actionsCentered}`}>
             <button
               type="submit"
               className={styles.primaryBtn}

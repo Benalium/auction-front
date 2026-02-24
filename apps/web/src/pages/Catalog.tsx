@@ -1,41 +1,50 @@
-import { useEffect, useState, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
-import { LayoutGrid, List, Filter } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { LayoutGrid, List, Filter, Search, Plus } from "lucide-react";
 import { api } from "../api/client";
+import { useAuth } from "../auth/AuthContext";
 import type { Lot } from "auction-api-client";
 import { LotCard } from "../components/LotCard";
 
 import styles from "./Catalog.module.css";
 
 const CATEGORIES = ["Все категории", "Живопись", "Скульптура", "Фарфор", "Ювелирные изделия"];
+const SEARCH_DEBOUNCE_MS = 400;
 
 export function Catalog() {
-  const [searchParams] = useSearchParams();
-  const query = searchParams.get("q") ?? "";
+  const { isAuthenticated, user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialQ = searchParams.get("q") ?? "";
+  const [searchInput, setSearchInput] = useState(initialQ);
+  const isWorker = isAuthenticated && user?.role?.code === "worker";
+  const [debouncedSearch, setDebouncedSearch] = useState(initialQ);
   const [lots, setLots] = useState<Lot[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [category, setCategory] = useState("Все категории");
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSearch(searchInput.trim());
+      debounceRef.current = null;
+    }, SEARCH_DEBOUNCE_MS);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [searchInput]);
+
+  useEffect(() => {
+    setLoading(true);
     api.lots
-      .list()
+      .list(debouncedSearch ? { search: debouncedSearch } : undefined)
       .then(setLots)
       .catch(() => setLots([]))
       .finally(() => setLoading(false));
-  }, []);
-
-  const filtered = useMemo(() => {
-    let result = lots;
-    if (query.trim()) {
-      const q = query.trim().toLowerCase();
-      result = result.filter(
-        (lot) =>
-          lot.name.toLowerCase().includes(q)
-      );
-    }
-    return result;
-  }, [lots, query]);
+    const next = debouncedSearch ? { q: debouncedSearch } : {};
+    setSearchParams(next, { replace: true });
+  }, [debouncedSearch, setSearchParams]);
 
   return (
     <main className={styles.main}>
@@ -59,8 +68,22 @@ export function Catalog() {
 
         <div className={styles.content}>
           <div className={styles.toolbar}>
-            <div className={styles.searchInfo}>
-              Найдено лотов: {filtered.length}
+            {isWorker && (
+              <Link to="/catalog/add" className={styles.addLotBtn}>
+                <Plus size={18} />
+                Добавить лот
+              </Link>
+            )}
+            <div className={styles.searchWrap}>
+              <Search size={18} className={styles.searchIcon} aria-hidden />
+              <input
+                type="search"
+                placeholder="Поиск по названию..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className={styles.searchInput}
+                aria-label="Поиск"
+              />
             </div>
             <div className={styles.toolbarActions}>
               <button
@@ -94,7 +117,7 @@ export function Catalog() {
 
           {loading ? (
             <p className={styles.loading}>Загрузка...</p>
-          ) : filtered.length === 0 ? (
+          ) : lots.length === 0 ? (
             <p className={styles.empty}>Лотов не найдено</p>
           ) : (
             <div
@@ -104,7 +127,7 @@ export function Catalog() {
                   : styles.list
               }
             >
-              {filtered.map((lot) => (
+              {lots.map((lot) => (
                 <LotCard key={lot.id} lot={lot} view={view} />
               ))}
             </div>

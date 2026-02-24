@@ -1,52 +1,82 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { api } from "../api/client";
 import { formatApiError } from "../utils/formatApiError";
 
 import styles from "./AddLot.module.css";
 
-interface AddLotForm {
+interface EditLotForm {
   name: string;
   startingPrice: string;
   endTime: string;
 }
 
-export function AddLot() {
+function toDatetimeLocal(iso: string): string {
+  const d = new Date(iso);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const h = String(d.getHours()).padStart(2, "0");
+  const min = String(d.getMinutes()).padStart(2, "0");
+  return `${y}-${m}-${day}T${h}:${min}`;
+}
+
+export function EditLot() {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
-  } = useForm<AddLotForm>();
+  } = useForm<EditLotForm>();
 
-  const onSubmit = async (data: AddLotForm) => {
+  useEffect(() => {
+    if (!id) return;
+    api.lots
+      .get(Number(id))
+      .then((lot) => {
+        reset({
+          name: lot.name,
+          startingPrice: String(lot.starting_price),
+          endTime: toDatetimeLocal(lot.end_time),
+        });
+      })
+      .catch(() => navigate("/catalog", { replace: true }))
+      .finally(() => setLoading(false));
+  }, [id, reset, navigate]);
+
+  const onSubmit = async (data: EditLotForm) => {
+    if (!id) return;
     setError(null);
     const endTime = new Date(data.endTime).toISOString();
     try {
-      await api.lots.create({
+      await api.lots.update(Number(id), {
         name: data.name.trim(),
         starting_price: parseFloat(
           data.startingPrice.replace(/\s/g, "").replace(",", ".")
         ),
         end_time: endTime,
-        images_urls: [],
       });
-      navigate("/catalog");
+      navigate(`/catalog/${id}`);
     } catch (e: unknown) {
       const msg =
         e && typeof e === "object" && "body" in e
           ? formatApiError((e as { body: unknown }).body)
-          : "Ошибка при добавлении лота";
+          : "Ошибка при сохранении";
       setError(msg);
     }
   };
 
+  if (loading) return <p className={styles.title}>Загрузка...</p>;
+
   return (
     <main className={styles.main}>
-      <h1 className={styles.title}>Добавить лот</h1>
+      <h1 className={styles.title}>Изменить лот</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         {error && <div className={styles.error}>{error}</div>}
@@ -101,7 +131,7 @@ export function AddLot() {
             className={styles.primaryBtn}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Добавление..." : "Добавить лот"}
+            {isSubmitting ? "Сохранение..." : "Сохранить"}
           </button>
         </div>
       </form>

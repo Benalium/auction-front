@@ -12,10 +12,18 @@ function parseEndTime(endTime: string): number | null {
 }
 
 function formatTime(seconds: number): string {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
-  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  if (days > 0) {
+    return `${days} д. ${hours.toString().padStart(2, "0")} ч. ${minutes.toString().padStart(2, "0")} мин. ${secs.toString().padStart(2, "0")} сек.`;
+  }
+  if (hours > 0) {
+    return `${hours} ч. ${minutes.toString().padStart(2, "0")} мин. ${secs.toString().padStart(2, "0")} сек.`;
+  }
+  return `${minutes} мин. ${secs.toString().padStart(2, "0")} сек.`;
 }
 
 export function Countdown({

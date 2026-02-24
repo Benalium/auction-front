@@ -16,6 +16,55 @@
   text-decoration: none;
 }
 
+.backRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.workerActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.workerBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  background: transparent;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+}
+
+.workerBtn:hover {
+  background: rgba(var(--color-primary-rgb, 59 130 246), 0.1);
+}
+
+.workerBtnDanger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  background: transparent;
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.workerBtnDanger:hover {
+  background: rgba(220, 38, 38, 0.1);
+}
+
 .layout {
   display: grid;
   grid-template-columns: 1fr 400px;
@@ -130,6 +179,16 @@
   margin-bottom: var(--space-4);
 }
 
+.startingPriceBlock {
+  margin-bottom: var(--space-2);
+}
+
+.startingPrice {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
 .priceBlock {
   margin-bottom: var(--space-4);
 }
@@ -202,6 +261,12 @@
   font-size: var(--font-size-sm);
   color: var(--color-success);
   margin: 0;
+}
+
+.workerBidNote {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin: 0 0 var(--space-4);
 }
 
 .infoBox {
