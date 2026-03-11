@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Heart, Share2, Pencil, Flag, Trash2 } from "lucide-react";
-import { api } from "../api/client";
+import { api, resolveImageUrl } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { formatApiError } from "../utils/formatApiError";
 import { useFavorites } from "../hooks/useFavorites";
@@ -73,7 +73,7 @@ export function Lot() {
   if (loading) return <p className={styles.loading}>Загрузка...</p>;
   if (!lot) return <p className={styles.error}>Лот не найден</p>;
 
-  const images = lot.images_urls ?? [];
+  const images = (lot.images_urls ?? []).map(resolveImageUrl);
   const mainImage = images[0] ?? "";
   const currentPrice = lot.current_price ?? lot.starting_price;
   const bets: LotBet[] = (lot as { bets?: LotBet[] }).bets ?? [];

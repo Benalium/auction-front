@@ -60,12 +60,20 @@ const tokenStore: TokenStore = {
   },
 };
 
-const baseUrl = import.meta.env.VITE_API_URL ?? "";
+const baseUrl = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
 export const apiConfig: ClientConfig = {
-  baseUrl: baseUrl.replace(/\/$/, ""),
+  baseUrl,
   tokenStore,
 };
+
+/** Для отображения: относительные URL (например /media/...) превращает в абсолютные с базой API. */
+export function resolveImageUrl(url: string): string {
+  if (!url) return url;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("/") && baseUrl) return `${baseUrl}${url}`;
+  return url;
+}
 
 export const api = {
   auth: {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
-import { api } from "../api/client";
+import { api, resolveImageUrl } from "../api/client";
 import type { BetResponse, Lot } from "auction-api-client";
 import { useAuth } from "../auth/AuthContext";
 import { useFavorites } from "../hooks/useFavorites";
@@ -148,7 +148,7 @@ export function Profile() {
                     <Link to={`/catalog/${lot.id}`} className={styles.cardLink}>
                       <div className={styles.cardImage}>
                         <img
-                          src={lot.images_urls?.[0] ?? "https://placehold.co/300x200/1f2937/9ca3af?text=Лот"}
+                          src={resolveImageUrl(lot.images_urls?.[0] ?? "https://placehold.co/300x200/1f2937/9ca3af?text=Лот")}
                           alt={lot.name}
                         />
                       </div>
@@ -214,7 +214,7 @@ export function Profile() {
                       <div className={styles.cardImageWrap}>
                         <div className={styles.cardImage}>
                           <img
-                            src={lot.images_urls?.[0] ?? "https://placehold.co/300x200/1f2937/9ca3af?text=Лот"}
+                            src={resolveImageUrl(lot.images_urls?.[0] ?? "https://placehold.co/300x200/1f2937/9ca3af?text=Лот")}
                             alt={lot.name}
                           />
                           <button

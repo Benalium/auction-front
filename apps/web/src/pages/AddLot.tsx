@@ -10,6 +10,7 @@ interface AddLotForm {
   name: string;
   startingPrice: string;
   endTime: string;
+  imageUrls: string;
 }
 
 export function AddLot() {
@@ -25,6 +26,10 @@ export function AddLot() {
   const onSubmit = async (data: AddLotForm) => {
     setError(null);
     const endTime = new Date(data.endTime).toISOString();
+    const images_urls = (data.imageUrls ?? "")
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
     try {
       await api.lots.create({
         name: data.name.trim(),
@@ -32,7 +37,7 @@ export function AddLot() {
           data.startingPrice.replace(/\s/g, "").replace(",", ".")
         ),
         end_time: endTime,
-        images_urls: [],
+        images_urls,
       });
       navigate("/catalog");
     } catch (e: unknown) {
@@ -86,6 +91,16 @@ export function AddLot() {
           {errors.endTime && (
             <span className={styles.fieldError}>{errors.endTime.message}</span>
           )}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="imageUrls">Ссылки на фото (по одной на строку)</label>
+          <textarea
+            id="imageUrls"
+            rows={3}
+            placeholder="https://example.com/photo1.jpg"
+            {...register("imageUrls")}
+          />
         </div>
 
         <div className={styles.actions}>

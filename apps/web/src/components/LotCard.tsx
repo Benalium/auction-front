@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import type { Lot } from "auction-api-client";
+import { resolveImageUrl } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { useFavorites } from "../hooks/useFavorites";
 import { Countdown } from "./Countdown";
@@ -25,7 +26,7 @@ export function LotCard({ lot, view = "grid" }: LotCardProps) {
   const navigate = useNavigate();
   const { isFavorite, toggle } = useFavorites();
   const fav = isFavorite(lot.id);
-  const imgUrl = lot.images_urls?.[0] ?? "/placeholder-lot.jpg";
+  const imgUrl = resolveImageUrl(lot.images_urls?.[0] ?? "/placeholder-lot.jpg");
 
   const handleHeartClick = (e: React.MouseEvent) => {
     e.preventDefault();

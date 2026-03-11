@@ -68,6 +68,12 @@
   margin-top: var(--space-1);
 }
 
+.hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+}
+
 .actions {
   display: flex;
   gap: var(--space-4);

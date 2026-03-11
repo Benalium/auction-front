@@ -76,6 +76,11 @@ export interface CreateLotPayload {
   starting_price: number;
   end_time: string;
   images_urls: string[];
+  /**
+   * Optional images to upload with the lot (multipart/form-data).
+   * When provided, client will send multipart instead of JSON.
+   */
+  images?: File[];
 }
 
 /** Partial body for PATCH /api/lots/:id/ */
@@ -84,6 +89,10 @@ export interface UpdateLotPayload {
   starting_price?: number;
   end_time?: string;
   images_urls?: string[];
+  /**
+   * Optional new images to append to the lot.
+   */
+  images?: File[];
 }
 
 // Bets

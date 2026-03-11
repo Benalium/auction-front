@@ -21,9 +21,27 @@ export function createLot(
   config: ClientConfig,
   payload: CreateLotPayload
 ): Promise<Lot> {
+  // If images are provided, use multipart/form-data; otherwise send JSON as before.
+  if (payload.images && payload.images.length > 0) {
+    const formData = new FormData();
+    formData.append("name", payload.name);
+    formData.append("starting_price", String(payload.starting_price));
+    formData.append("end_time", payload.end_time);
+    // For now, when uploading files мы не отправляем images_urls —
+    // backend сам заполнит их путями к загруженным файлам.
+    for (const file of payload.images) {
+      formData.append("images", file);
+    }
+    return request<Lot>(config, "/api/lots/", {
+      method: "POST",
+      body: formData,
+    });
+  }
+
+  const { images, ...jsonPayload } = payload;
   return request<Lot>(config, "/api/lots/", {
     method: "POST",
-    body: JSON.stringify(payload),
+    body: JSON.stringify(jsonPayload),
   });
 }
 
@@ -32,9 +50,31 @@ export function updateLot(
   id: number,
   payload: UpdateLotPayload
 ): Promise<Lot> {
+  if (payload.images && payload.images.length > 0) {
+    const formData = new FormData();
+    if (payload.name != null) {
+      formData.append("name", payload.name);
+    }
+    if (payload.starting_price != null) {
+      formData.append("starting_price", String(payload.starting_price));
+    }
+    if (payload.end_time != null) {
+      formData.append("end_time", payload.end_time);
+    }
+    for (const file of payload.images) {
+      formData.append("images", file);
+    }
+    // images_urls при multipart можно не указывать: backend добавит новые URL.
+    return request<Lot>(config, `/api/lots/${id}/`, {
+      method: "PATCH",
+      body: formData,
+    });
+  }
+
+  const { images, ...jsonPayload } = payload;
   return request<Lot>(config, `/api/lots/${id}/`, {
     method: "PATCH",
-    body: JSON.stringify(payload),
+    body: JSON.stringify(jsonPayload),
   });
 }
 

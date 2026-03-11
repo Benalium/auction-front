@@ -25,10 +25,16 @@ export async function request<T>(
   const base = getBaseUrl(config);
   const url = path.startsWith("http") ? path : `${base.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
   const token = config.tokenStore?.getAccessToken();
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    ...((options.headers as Record<string, string>) ?? {}),
-  };
+  const isFormData =
+    typeof FormData !== "undefined" && options.body instanceof FormData;
+  const headers: HeadersInit = isFormData
+    ? {
+        ...((options.headers as Record<string, string>) ?? {}),
+      }
+    : {
+        "Content-Type": "application/json",
+        ...((options.headers as Record<string, string>) ?? {}),
+      };
   if (token) {
     (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
   }

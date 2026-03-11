@@ -10,6 +10,7 @@ interface EditLotForm {
   name: string;
   startingPrice: string;
   endTime: string;
+  imageUrls: string;
 }
 
 function toDatetimeLocal(iso: string): string {
@@ -35,15 +36,20 @@ export function EditLot() {
     formState: { errors, isSubmitting },
   } = useForm<EditLotForm>();
 
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
+
   useEffect(() => {
     if (!id) return;
     api.lots
       .get(Number(id))
       .then((lot) => {
+        const urls = lot.images_urls ?? [];
+        setExistingImageUrls(urls);
         reset({
           name: lot.name,
           startingPrice: String(lot.starting_price),
           endTime: toDatetimeLocal(lot.end_time),
+          imageUrls: "",
         });
       })
       .catch(() => navigate("/catalog", { replace: true }))
@@ -54,6 +60,11 @@ export function EditLot() {
     if (!id) return;
     setError(null);
     const endTime = new Date(data.endTime).toISOString();
+    const newUrls = (data.imageUrls ?? "")
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const images_urls = newUrls.length > 0 ? [...existingImageUrls, ...newUrls] : existingImageUrls;
     try {
       await api.lots.update(Number(id), {
         name: data.name.trim(),
@@ -61,6 +72,7 @@ export function EditLot() {
           data.startingPrice.replace(/\s/g, "").replace(",", ".")
         ),
         end_time: endTime,
+        images_urls,
       });
       navigate(`/catalog/${id}`);
     } catch (e: unknown) {
@@ -116,6 +128,21 @@ export function EditLot() {
           {errors.endTime && (
             <span className={styles.fieldError}>{errors.endTime.message}</span>
           )}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="imageUrls">Ссылки на фото (по одной на строку)</label>
+          {existingImageUrls.length > 0 && (
+            <p className={styles.hint}>
+              Сейчас у лота {existingImageUrls.length} фото. Ниже можно добавить новые ссылки — они дополнят список.
+            </p>
+          )}
+          <textarea
+            id="imageUrls"
+            rows={3}
+            placeholder="https://example.com/photo.jpg"
+            {...register("imageUrls")}
+          />
         </div>
 
         <div className={styles.actions}>
